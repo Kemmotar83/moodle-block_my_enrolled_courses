@@ -124,9 +124,9 @@ function block_my_enrolled_courses_get_visible_courses() {
     $html .= html_writer::start_tag('optgroup', array('label' => $lable));
     
     foreach ($visiblecourses as $id => $course) {
-				$html .= html_writer::start_tag('option', array('value' => $id));
-				$html .= $course->fullname;
-				$html .= html_writer::end_tag('option');
+	$html .= html_writer::start_tag('option', array('value' => $id));
+	$html .= get_course_display_name_for_list($course);
+	$html .= html_writer::end_tag('option');
     }
     
     $html .= html_writer::end_tag('optgroup');
@@ -161,7 +161,7 @@ function block_my_enrolled_courses_get_hidden_courses() {
     if (! empty($hiddencourses)) {
         foreach ($hiddencourses as $id => $course) {
             $html .= html_writer::start_tag('option', array('value' => $id));
-            $html .= $course->fullname;
+            $html .= get_course_display_name_for_list($course);
             $html .= html_writer::end_tag('option');
         }
     }
@@ -185,11 +185,11 @@ function block_my_enrolled_courses_visible_in_block() {
     $html .= html_writer::start_tag('ul', array('id' => 'course_list_in_block'));
     if (! empty($coursesinorder)) {
     		$coursesinorderstr = implode(', ', $coursesinorder);
-        $courses = $DB->get_records_sql('SELECT id, fullname FROM {course} WHERE id IN (' . $coursesinorderstr . ')');
+        $courses = $DB->get_records_sql('SELECT id, fullname, shortname FROM {course} WHERE id IN (' . $coursesinorderstr . ')');
         foreach ($coursesinorder as $id) {
             $url = new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $id));
             $content = html_writer::start_tag('div', array('class' => 'li_course', 'data-id' => $id));
-            $anchor = html_writer::link($url, $courses[$id]->fullname);
+            $anchor = html_writer::link($url, get_course_display_name_for_list($courses[$id]));
             $courseicon = get_string('course');
             $courseicon = $OUTPUT->pix_icon('i/course', $courseicon);
             $colapsible = html_writer::start_tag('span', array('class' => 'colapsible_icon'));
